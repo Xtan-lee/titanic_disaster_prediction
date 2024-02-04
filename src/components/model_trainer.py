@@ -130,6 +130,7 @@ class ModelTrainer:
             print(f"The best model is {model_report_df.index.values[0]} with hyper-parameters {model_report_df.best_params.values[0]}")
 
             print(f"Saving Collated Model Reports to CSV")
+            os.makedirs('output',exist_ok=True)
             model_report_df.drop(['best_estimator'], axis=1).to_csv('output/model_report.csv')
 
             print(f"Saving best model")

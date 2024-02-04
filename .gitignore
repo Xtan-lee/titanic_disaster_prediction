@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+src/artifacts/titanic_disaster_model.pkl
+src/output/*
+
 # C extensions
 *.so
 

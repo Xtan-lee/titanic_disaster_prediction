@@ -1,17 +1,13 @@
 import sys
 import os
 
-import numpy as np 
-import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder,StandardScaler
 
 from src.exception import CustomException
-from src.logger import logging
 
-from src.components.model_trainer import ModelTrainerConfig
 from src.components.model_trainer import ModelTrainer
 
 from src.components.prediction_component import PredictPipeline
@@ -35,6 +31,8 @@ class DataTransformation:
             # Final segragation of features because some integer columns are categorical columns
             num_features = ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'Fsize']
             cat_features = ['Sex', 'Ticket', 'Embarked','Title']
+            # This feature is seperated because it has a lot of missing Values and therefore will be handled differently
+            cabin_feature = ['Cabin']
 
             num_transformer = Pipeline(steps=[
                 ('imputer', SimpleImputer(strategy='median')),
@@ -44,14 +42,20 @@ class DataTransformation:
                 ('imputer', SimpleImputer(strategy='most_frequent')),
                 ('onehot', OneHotEncoder(handle_unknown='ignore'))
             ])
+            cabin_transformer = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='constant', fill_value='NN')),
+            ('onehot', OneHotEncoder(handle_unknown='ignore'))
+            ])
 
-            logging.info(f"Categorical columns: {cat_features}")
-            logging.info(f"Numerical columns: {num_features}")
+            print(f"Categorical columns: {cat_features}")
+            print(f"Numerical columns: {num_features}")
+            print(f"Cabin column: {cabin_feature}")
 
             # Combine the preprocessing steps for numerical and categorical features
             preprocessor = ColumnTransformer(transformers=[
                 ('num', num_transformer, num_features),
-                ('cat', cat_transformer, cat_features)
+                ('cat', cat_transformer, cat_features),
+                ('cabin', cabin_transformer, cabin_feature)
             ],remainder='drop')
 
             return preprocessor

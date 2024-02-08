@@ -1,14 +1,11 @@
 import os
 import sys
-from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV, RandomizedSearchCV
-from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, FunctionTransformer
-from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
@@ -17,11 +14,10 @@ from sklearn.metrics import accuracy_score
 from xgboost import XGBClassifier
 
 from src.exception import CustomException
-from src.logger import logging
 
 from src.utils import save_object
 
-@dataclass
+# @dataclass
 class ModelTrainerConfig:
     trained_model_file_path=os.path.join("artifacts", "titanic_disaster_model.pkl")
 
@@ -49,6 +45,9 @@ class ModelTrainer:
 
             # Ticket first letters
             df["Ticket"] = df["Ticket"].apply(lambda x: str(x)[0])
+
+            # Cabin first letters
+            df['Cabin'] = df['Cabin'].apply(lambda x: x[0] if pd.notnull(x) else np.nan)
 
             return df
         
